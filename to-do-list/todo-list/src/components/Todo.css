@@ -1,0 +1,16 @@
+.todo_container{
+    margin-top: 5rem;
+}
+.todo_container input{
+    padding: 20px;
+    font-size: 20px;
+    border: 1px solid black;
+    border-radius: 30px 0px 0 30px;
+}
+.todo_container button{
+    padding: 25px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 0px 30px 30px 0;
+    margin-bottom: 10px;
+}
