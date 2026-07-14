@@ -28,16 +28,21 @@ export default function TodoListContainer() {
         setTask(e.target.value)
         setAlert("idle")
     }
+    function handleDelete(id){
+        console.log("test")
+        const updatedTask = taskList.filter((item,id) => item.id !== id);
+        setTaskList(updatedTask);
+    }
     useEffect(()=>console.log(taskList),[taskList])
 return (
-    <section>
+    <section className="py-20">
         <Alert alert={alert}/>
         <form onSubmit={handleSubmit} className="mt-10">
             <InputGroup task={task} handleChange={handleChange} />
         </form>
         {/* Task List */}
         <section className="flex justify-center align-middle">
-            <TaskLists taskList={taskList}  />
+            <TaskLists taskList={taskList} handleDelete={handleDelete} />
         </section>
     </section>
   )
