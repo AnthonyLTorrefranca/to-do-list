@@ -1,17 +1,10 @@
-import '../../index.css'
-
-const InputGroup = ({handleSubmit, handleAddTask, task, alert}) => {
+const InputGroup = ({handleChange, task}) => {
   return (
     <section className="flex items-center flex-col">
-        {alert === "idle" && <h1>Input your task here!</h1>}
-        {alert === "blank" && <h1>Input your task here!</h1>}
-        {alert === "duplicate" && <h1>Input your task here!</h1>}
-        <section>
-            <input type="text" placeholder='Enter your dedicated task here'
-                name='task' value={task} onChange={handleAddTask} className="cursor-pointer border-solid border-black rounded-[25px]"/>
-            <button onClick={handleSubmit} className="cursor-pointer bg-green-300 border
-                border-solid border-black rounded-[25px]">ADD</button>
-        </section>
+      <section className="flex items-center">
+        <input className="bg-green-200 h-10 w-50" type="text" value={task} placeholder="Enter your task here..." onChange={handleChange} />
+            <button className="bg-green-200 h-10 w-10 cursor-pointer">ADD</button>
+      </section>
     </section>
   )
 }
