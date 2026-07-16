@@ -11,17 +11,24 @@ export default function TodoListContainer() {
     const [taskList, setTaskList] = useState([])
     function handleSubmit(e){
         e.preventDefault()
-        if (task.trim() === ""){
-            setAlert("blank")
+        const newTask = {id: crypto.randomUUID(), text: task}
+        const normalizedNewTask = newTask.text.trim().toLocaleLowerCase();
+        
+        if (taskList.length >= 9){
+            setAlert("taskFull")
             return
         }
-        const newTask = {id: crypto.randomUUID(), text: task }
-        if (taskList.some(item=> item.text.trim().toLowerCase() === newTask.text.trim().toLowerCase())){
+
+        if (taskList.some(item=> item.text.trim().toLowerCase() === normalizedNewTask)){
             setAlert("duplicate");
             return
+        }    
+
+        if (task.trim() === ""){
+            setAlert("blank")
+            return    
         }
-        setAlert("idle")
-        setTaskList(prev=>[...prev, newTask]);
+        setTaskList(prev=>[...prev, newTask])
         setTask("")
     }
     function handleChange(e){
@@ -29,20 +36,19 @@ export default function TodoListContainer() {
         setAlert("idle")
     }
     function handleDelete(index){
-        console.log("test")
         const updatedTask = taskList.filter((_, i) => i !== index);
-        return setTaskList(updatedTask);
+        setTaskList(updatedTask);
     }
     useEffect(()=>console.log(taskList),[taskList])
 return (
-    <section className="flex flex-col align-middle justify-center py-20 rounded-4xl border-2 border-black w-200">
+    <section className="flex flex-col align-middle justify-start h-250 py-20 rounded-4xl border-2 border-black w-200 overflow-hidden">
         <Alert alert={alert}/>
         <form onSubmit={handleSubmit} className="mt-10">
             <InputGroup task={task} handleChange={handleChange} />
         </form>
         {/* Task List */}
         <section className="flex justify-center align-middle">
-            <TaskLists taskList={taskList} handleDelete={handleDelete} />
+            <TaskLists taskList={taskList} index={index} handleDelete={handleDelete}/>
         </section>
     </section>
   )
