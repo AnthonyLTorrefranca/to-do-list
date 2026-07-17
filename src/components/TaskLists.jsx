@@ -1,16 +1,17 @@
-import TaskItem from './TaskItem.jsx'
+import TaskBtn from './TaskBtn.jsx'
 
-export default function TaskList({TaskList}) {
+export default function TaskList({setTaskList, TaskList, }) {
+
   return (
-    <div>
+    <>
       <ul>
         {TaskList.map((item,id)=>{
-          return <li key={id}>
+          return <li key={id} className="flex justify-between p-5 m-5 border rounded-full w-50">
             {item.text}
-            <TaskItem />
+            <TaskBtn setTaskList={setTaskList} />
           </li>
         })}
       </ul>
-    </div>
+    </>
   )
 }
