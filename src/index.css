@@ -3,9 +3,6 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-<<<<<<< HEAD
     flex-wrap: nowrap;
     flex-direction: column; 
-=======
->>>>>>> a62d9a9d5f0f958371cb54fcb15a7dffc6bfbbda
 }

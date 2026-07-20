@@ -1,13 +1,9 @@
-export default function TaskBtn({setTaskList, TaskList, index}) {
-  function handleDelete(targetIndex){
-    const updatedTask = TaskList.filter((_,i)=> i!== targetIndex)
-    setTaskList(updatedTask)
-  }
+export default function TaskBtn({handleDelete, index}) {
   return (
-    <section>
-        <button className="cursor-pointer rounded-full hover:bg-gray-500 p-1 " type="button">☝️</button>
-        <button className="cursor-pointer rounded-full hover:bg-gray-500 p-1 " type="button">👇</button>
-        <button className="cursor-pointer rounded-full hover:bg-gray-500 p-1 " type="button" onClick={()=>handleDelete(index)}>❌</button>
+    <section className="flex items-center justify-around">
+      <button className="p-1 rounded cursor-pointer bg-gray-100 m-2 hover:bg-gray-200 ">☝️</button>
+      <button className="p-1 rounded cursor-pointer bg-gray-100 m-2 hover:bg-gray-200 ">👇</button>
+      <button className="p-1 rounded cursor-pointer bg-gray-100 m-2 hover:bg-gray-200 " onClick={()=> handleDelete(index)}>❌</button>
     </section>
   )
 }
