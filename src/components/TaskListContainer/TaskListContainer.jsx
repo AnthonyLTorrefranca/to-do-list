@@ -30,24 +30,34 @@ export default function TaskListContainer() {
         }
         setTaskList(prev=>[...prev, newTask])
         setTask("")
-        console.log("test")
     }
-    function handleDelete(id){
-        const updatedTask = taskList.filter((item=> item.id !== id))
+    function handleDelete(index){
+        const updatedTask = taskList.filter((item) => item.id !== index);
         setTaskList(updatedTask)
     }
-    function moveUp(id){
-        const updatedTask = [...taskList];
-        if (updatedTask < 1){
-            [updatedTask[id-1], updatedTask[1]] = [updatedTask[1], updatedTask[id-1]];
-            setTaskList(updatedTask)
-        }
+    function handleMoveUp(id){
+        const currentIndex = taskList.findIndex((task) => task.id === id);
+        if(currentIndex <= 0) return;
+            const newList = [...taskList];
+            [newList[currentIndex], newList[currentIndex - 1]] = [newList[currentIndex - 1], newList[currentIndex]];
+            setTaskList(newList);
     }
-    return (
-    <section className="flex flex-col items-center border rounded-3xl h-240 px-30 pt-10         overflow-hidden">
+function handleMoveDown(id){
+    const currentIndex = taskList.findIndex((task) => task.id === id);
+    if (currentIndex < 0 || currentIndex >= taskList.length - 1){ 
+        setAlert("down")
+        return;
+    }
+    const newList = [...taskList];
+    [newList[currentIndex], newList[currentIndex + 1]] =
+        [newList[currentIndex + 1], newList[currentIndex]];
+    setTaskList(newList);
+}
+return (
+    <section className="flex flex-col items-center border rounded-3xl h-240 w-150 px-30 pt-10 overflow-hidden">
         <TaskAlert alert={alert} />
         <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} />
-        <TaskLists taskList={taskList} handleDelete={handleDelete} moveup={moveUp} />
+        <TaskLists taskList={taskList} handleDelete={handleDelete} handleMoveUp={handleMoveUp} handleMoveDown={handleMoveDown} />
     </section>
   )
 }
