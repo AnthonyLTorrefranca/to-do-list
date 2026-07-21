@@ -1,15 +1,13 @@
-import TaskBtn from "./TaskBtn"
+import TaskBtn from './TaskBtn.jsx'
 
-export default function TaskLists({taskList, handleDelete, index}) {
+export default function TaskLists({taskList, handleDelete, moveUp, }) {
   return (
-    <section className=" pt-10">
-      <ul className="flex flex-col items-center justify-center">
-        {taskList.map((task, index) =>{
-          return <li key={index} className="flex py-2 px-5 m-2 w-80 justify-around items-center border rounded-2xl"> {task.text}
-          <TaskBtn handleDelete={handleDelete} index={index} />
-        </li>
-        })}
-      </ul>
-    </section>
+    <ul className="flex flex-col pt-10">
+      {taskList.map(task=> 
+        <li key={task.id} className="flex flex-row justify-between items-center mb-2 p-5 border rounded-2xl w-80 overflow-hidden">
+            {task.text}
+            <TaskBtn handleDelete={handleDelete} index={task.id} moveup={moveUp} />
+        </li>)}
+    </ul>
   )
 }
