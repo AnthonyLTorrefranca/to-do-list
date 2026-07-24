@@ -10,73 +10,67 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
 
     function handleEdit(index){
-        const selectedTask = taskList.findIndex(item=> item.id === index);
-        const selTaskText = taskList[selectedTask].text;
-        setTask(selTaskText);
-        setEditTask(selTaskText)
         setEditTask(index)
-    }
-    // handles the submit
+        const selTaskInd = taskList.findIndex(item=> item.id === index);
+        const selTask = taskList[selTaskInd].text
+        setTask(selTask)
+    } // handles the submit
     function handleSubmit(e){
         e.preventDefault()
-        if (editTask !== null){
-            setTaskList(prevTask =>
-                prevTask.map(item=> item.id === editTask ? 
-                    {...item, text: task} : item)
-                )
-        console.log("check")
-        }
         // gives new task unique id
-        const newTask = {
-            id: crypto.randomUUID(), text: task, 
-            isCompleted: false, editTask: null,
-        }
-        // prevents blank task to be added
-        if(task.trim() === ""){
-            setAlert("blank")
+        const newTask = { id: crypto.randomUUID(), text: task}
+        // checks the task if it's blank
+        if (task.trim() === ""){
+            setAlert("blank");
             return
         }
-        // checks if the new task exists
-        if(taskList.some(item=> item.text.trim().toLowerCase() === task.trim().toLowerCase())){
-            setAlert("duplicate")
+        // checks duplicate for both old and new task
+        if (taskList.some(item=> item.text === newTask.text)){
+            console.log("dup check")
+            setAlert("duplicate");
             return
         }
-        
+        // handles the edit
+        if (editTask !== null){
+            setTask("")
+            setTaskList(prevTask=> 
+                prevTask.map(item=> item.id === editTask ?
+                    {...item, text: task} : item
+                )
+            )
+            setEditTask(null)
+            return
+        }
         // appends task to the list
-        setTaskList(prev=>[...prev, newTask])
-
-        // clears the input box
+        setTaskList(prev=> [...prev, newTask])
         setTask("")
-    }
-    // input change
+    } // handles the changes on input 
     function handleChange(e){
         setTask(e.target.value)
         setAlert("idle")
         return
-    }
+    } // handles the deletion
     function handleDelete(index){
         const updatedTask = taskList.filter(item=> item.id !== index);
         setTaskList(updatedTask)
-    }
-
+    } // handles move up
     function handleMoveUp(index){
-        const updatedIndex = taskList.findIndex(item=> item.id === index);
-        if (updatedIndex <= 0){
-            setAlert("top"); 
-            setTimeout(()=>{
-                setAlert("idle");
-            },1500)
-            return;
-        }
-        const updatedTask = [...taskList]
-        if (updatedTask.length > updatedIndex){
-            [updatedTask[updatedIndex], updatedTask[updatedIndex-1]] = [updatedTask[updatedIndex-1], updatedTask[updatedIndex]]
-            setAlert("idle")
-            setTaskList(updatedTask)
-            return
-        }
+    const updatedIndex = taskList.findIndex(item=> item.id === index);
+    if (updatedIndex <= 0){
+        setAlert("top"); 
+        setTimeout(()=>{
+            setAlert("idle");
+        },1500)
+        return;
     }
-
+    const updatedTask = [...taskList]
+    if (updatedTask.length > updatedIndex){
+        [updatedTask[updatedIndex], updatedTask[updatedIndex-1]] = [updatedTask[updatedIndex-1], updatedTask[updatedIndex]]
+        setAlert("idle")
+        setTaskList(updatedTask)
+        return
+    }
+    } // handles move down
     function handleMoveDown(index){
         const updatedIndex = taskList.findIndex(item=> item.id === index);
         const updatedTask = [...taskList];
@@ -88,7 +82,6 @@ export default function TaskListContainer() {
             
             return;
         }
-        // console.log(updatedIndex + 1, updatedTask.length)
         if (taskList.length >= updatedIndex){
             [updatedTask[updatedIndex+1], updatedTask[updatedIndex]] = [updatedTask[updatedIndex], updatedTask[updatedIndex+1]];
             setTaskList(updatedTask); 
