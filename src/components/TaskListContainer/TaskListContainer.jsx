@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TaskAlert from '../TaskAlert.jsx'
 import TaskInput from '../TaskInput.jsx'
 import TaskLists from '../TaskLists.jsx'
@@ -10,51 +10,49 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
 
     function handleEdit(index){
-        const selectedTask = taskList.find(item => item.id === index)
-
-        if (!selectedTask) {
-            return
-        }
-
-        setEditTask(index)
+        const selectedTask = taskList.find(item => item.id === index);
+        if (!selectedTask) return;
+        setEditTask(selectedTask.id)
         setTask(selectedTask.text)
         setAlert("idle")
-    }
-
-    // handles the submit
+    } // handles the submit
     function handleSubmit(e){
         e.preventDefault()
-
-        if (task.trim() === ""){
-            setAlert("blank")
-            return
-        }
-
-        const trimmedTask = task.trim()
-        const duplicateTask = taskList.find(item =>
-            item.text.trim().toLowerCase() === trimmedTask.toLowerCase()
-        )
-
-        if (duplicateTask && duplicateTask.id !== editTask) {
-            setAlert("duplicate")
-            return
-        }
-
-        if (editTask !== null) {
-            setTaskList(prevTask =>
-                prevTask.map(item => item.id === editTask ? { ...item, text: trimmedTask } : item)
-            )
-            setEditTask(null)
+        console.log(editTask)
+        const tTask = task.trim()
+        const isDuplicate = taskList.some(item => item.text === tTask && item.id !== editTask);
+        // checks if input is blank
+        if (tTask === ""){
+            setAlert("blank");
+            return;
+        } // checks for dup
+        if (isDuplicate){
+            setAlert("duplicate");
+            return;
+        } // edit the task that won't append new one
+        // unfinished task
+        if (editTask !== null){
+            setTaskList(prevTask => 
+                prevTask.map(item => item.id === editTask ? {...item, text: tTask} : item)
+            );
+            setEditTask(null);
             setTask("")
-            setAlert("idle")
-            return
         }
 
-        const newTask = { id: crypto.randomUUID(), text: trimmedTask }
-        setTaskList(prev => [...prev, newTask])
+        // if (editTask !== null){
+        //     setTaskList(prevTask=> 
+        //         prevTask.map(item=> item.id === editTask ? {...item, text: tTask} : item)
+        //     )
+        //     setEditTask(null)
+        //     setTask("")
+        //     return;
+        // }
+
+        const mTask = {id: crypto.randomUUID(), text: tTask}
+        setTaskList(prev=> [...prev, mTask])
+        console.log(mTask)
         setTask("")
-        setAlert("idle")
-    } 
+    }
     // handles the changes on input 
     function handleChange(e){
         setTask(e.target.value)
@@ -62,8 +60,9 @@ export default function TaskListContainer() {
         return
     } // handles the deletion
     function handleDelete(index){
-        const updatedTask = taskList.filter(item=> item.id !== index);
-        setTaskList(updatedTask)
+        console.log("handleDelete")
+        const updatedTask = taskList.filter(item=> item.id !== index)
+        setTaskList(updatedTask);
     } // handles move up
     function handleMoveUp(index){
     const updatedIndex = taskList.findIndex(item=> item.id === index);
@@ -83,7 +82,7 @@ export default function TaskListContainer() {
     }
     } // handles move down
     function handleMoveDown(index){
-        const updatedIndex = taskList.findIndex(item=> item.id === index);
+        const updatedIndex = taskList.findIndex(item=> item.index === index);
         const updatedTask = [...taskList];
         if (taskList.length <= updatedIndex + 1){
             setAlert("down"); 
