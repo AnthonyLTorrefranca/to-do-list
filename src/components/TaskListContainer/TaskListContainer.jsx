@@ -10,41 +10,50 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
 
     function handleEdit(index){
+        const selectedTask = taskList.find(item => item.id === index)
+
+        if (!selectedTask) {
+            return
+        }
+
         setEditTask(index)
-        const selTaskInd = taskList.findIndex(item=> item.id === index);
-        const selTask = taskList[selTaskInd].text
-        setTask(selTask)
-        setEditTask(null)
+        setTask(selectedTask.text)
+        setAlert("idle")
     }
+
     // handles the submit
     function handleSubmit(e){
         e.preventDefault()
-        // gives new task unique id
-        const newTask = { id: crypto.randomUUID(), text: task}
 
-        // checks the task if it's blank
         if (task.trim() === ""){
-            setAlert("blank");
-            return
-        }
-        if (editTask !== null){
-            setEditTask("edit")
-            setTaskList(prevTask=> 
-                prevTask.map(item=> item.id === editTask ?
-                    {...item, text: task} : item ))
+            setAlert("blank")
             return
         }
 
-        // checks duplicate for both old and new task
-        if (taskList.some(item=> item.text === newTask.text)){
-            console.log("dup check")
-            setAlert("duplicate");
+        const trimmedTask = task.trim()
+        const duplicateTask = taskList.find(item =>
+            item.text.trim().toLowerCase() === trimmedTask.toLowerCase()
+        )
+
+        if (duplicateTask && duplicateTask.id !== editTask) {
+            setAlert("duplicate")
             return
         }
-        // appends task to the list
-        setTaskList(prev=> [...prev, newTask])
-        console.log(taskList)
+
+        if (editTask !== null) {
+            setTaskList(prevTask =>
+                prevTask.map(item => item.id === editTask ? { ...item, text: trimmedTask } : item)
+            )
+            setEditTask(null)
+            setTask("")
+            setAlert("idle")
+            return
+        }
+
+        const newTask = { id: crypto.randomUUID(), text: trimmedTask }
+        setTaskList(prev => [...prev, newTask])
         setTask("")
+        setAlert("idle")
     } 
     // handles the changes on input 
     function handleChange(e){
@@ -94,7 +103,7 @@ return (
     <>
     <section className="flex flex-col items-center border rounded-3xl h-350 w-150 px-30 pt-10 overflow-hidden">
         <TaskAlert alert={alert} />
-        <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} editTask={editTask} />
+        <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} />
         <TaskLists taskList={taskList} handleDelete={handleDelete} handleMoveUp={handleMoveUp} 
             handleMoveDown={handleMoveDown} handleEdit={handleEdit} />
     </section>
