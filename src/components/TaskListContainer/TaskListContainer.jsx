@@ -10,32 +10,26 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
 
     function handleEdit(index){
-        setEditTask(true);
-        const selectedTask = taskList.find(item=> item.id === index);
-        setEditTask(selectedTask.id)
-        setTask(selectedTask.text)
+        const selTask = taskList.find(item=> item.text === task)
+        console.log("handleEdit", taskList)
     }
     function handleSubmit(e){
         e.preventDefault()
         const tTask = task.trim().toLowerCase();
-        const isDuplicate = taskList.some(item=> item.text === tTask && item.id === editTask);
-        const newTask = {id: crypto.randomUUID(), text: task};
+        const newTask = {id: crypto.randomUUID(), text: tTask}
+        const isDuplicate = taskList.some(item=> item.text === tTask);
         if (tTask === ""){
-            setAlert("blank")
-            return
+            setAlert("blank");
+            return;
         }
         if (isDuplicate){
             setAlert("duplicate");
             return;
         }
         if (editTask !== null){
-            setTaskList(prev=> prev.map(item=> item.id === editTask ? {item, text: newTask.text} : item))
-            setEditTask(null)
-            setTask("");
-            return;
+            console.log("test")
         }
-        // console.log(taskList)
-        setTaskList(prev=> [...prev, newTask])
+        setTaskList(item=> [...item, newTask])
         setTask("")
     }
     // useEffect(()=>{console.log(taskList)}, [])
@@ -46,15 +40,35 @@ export default function TaskListContainer() {
     }
     function handleDelete(index){
         const updatedTask = taskList.filter(item=> item.id !== index);
-        setTaskList(updatedTask);
-        return
+        return setTaskList(updatedTask)
     }
     function handleMoveUp(index){
-        null
+        const updatedTask = [...taskList]
+        const taskIndex = taskList.findIndex(item=> item.id === index);
+        setAlert("idle")
+        console.log(taskIndex+taskList.length, taskList.length)
+        if (taskIndex+taskList.length <= taskList.length){
+            return setAlert("top");
+        }
+        if (taskIndex+taskList.length >= taskList.length){
+            [updatedTask[taskIndex-1], updatedTask[taskIndex]] = [updatedTask[taskIndex], updatedTask[taskIndex-1]]
+            return setTaskList(updatedTask)
+        }
     }
-    function handleMoveDown(index){
-        null
-    }
+    function handleMoveDown(id) {
+        const updatedTask = [...taskList]
+        const taskIndex = taskList.findIndex(item=> item.id === id);
+        setAlert("idle")
+        console.log(taskIndex+1, taskList.length)
+        if (taskIndex+1 >= taskList.length){
+            return setAlert("down");
+        } 
+        if (taskIndex + 2 <= taskList.length){
+            [updatedTask[taskIndex+1], updatedTask[taskIndex]] = [updatedTask[taskIndex], updatedTask[taskIndex+1]]
+            setTaskList(updatedTask)
+            return
+        }
+}
 return (
     <>
     <section className="flex flex-col items-center border rounded-3xl h-350 w-150 px-30 pt-10 overflow-hidden">
