@@ -10,93 +10,50 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
 
     function handleEdit(index){
-        const selectedTask = taskList.find(item => item.id === index);
-        if (!selectedTask) return;
+        setEditTask(true);
+        const selectedTask = taskList.find(item=> item.id === index);
         setEditTask(selectedTask.id)
         setTask(selectedTask.text)
-        setAlert("idle")
-    } // handles the submit
+    }
     function handleSubmit(e){
         e.preventDefault()
-        console.log(editTask)
-        const tTask = task.trim()
-        const isDuplicate = taskList.some(item => item.text === tTask && item.id !== editTask);
-        // checks if input is blank
+        const tTask = task.trim().toLowerCase();
+        const isDuplicate = taskList.some(item=> item.text === tTask && item.id === editTask);
+        const newTask = {id: crypto.randomUUID(), text: task};
         if (tTask === ""){
-            setAlert("blank");
-            return;
-        } // checks for dup
+            setAlert("blank")
+            return
+        }
         if (isDuplicate){
             setAlert("duplicate");
             return;
-        } // edit the task that won't append new one
-        // unfinished task
-        if (editTask !== null){
-            setTaskList(prevTask => 
-                prevTask.map(item => item.id === editTask ? {...item, text: tTask} : item)
-            );
-            setEditTask(null);
-            setTask("")
         }
-
-        // if (editTask !== null){
-        //     setTaskList(prevTask=> 
-        //         prevTask.map(item=> item.id === editTask ? {...item, text: tTask} : item)
-        //     )
-        //     setEditTask(null)
-        //     setTask("")
-        //     return;
-        // }
-
-        const mTask = {id: crypto.randomUUID(), text: tTask}
-        setTaskList(prev=> [...prev, mTask])
-        console.log(mTask)
+        if (editTask !== null){
+            setTaskList(prev=> prev.map(item=> item.id === editTask ? {item, text: newTask.text} : item))
+            setEditTask(null)
+            setTask("");
+            return;
+        }
+        // console.log(taskList)
+        setTaskList(prev=> [...prev, newTask])
         setTask("")
     }
-    // handles the changes on input 
+    // useEffect(()=>{console.log(taskList)}, [])
     function handleChange(e){
         setTask(e.target.value)
         setAlert("idle")
         return
-    } // handles the deletion
-    function handleDelete(index){
-        console.log("handleDelete")
-        const updatedTask = taskList.filter(item=> item.id !== index)
-        setTaskList(updatedTask);
-    } // handles move up
-    function handleMoveUp(index){
-    const updatedIndex = taskList.findIndex(item=> item.id === index);
-    if (updatedIndex <= 0){
-        setAlert("top"); 
-        setTimeout(()=>{
-            setAlert("idle");
-        },1500)
-        return;
     }
-    const updatedTask = [...taskList]
-    if (updatedTask.length > updatedIndex){
-        [updatedTask[updatedIndex], updatedTask[updatedIndex-1]] = [updatedTask[updatedIndex-1], updatedTask[updatedIndex]]
-        setAlert("idle")
-        setTaskList(updatedTask)
+    function handleDelete(index){
+        const updatedTask = taskList.filter(item=> item.id !== index);
+        setTaskList(updatedTask);
         return
     }
-    } // handles move down
+    function handleMoveUp(index){
+        null
+    }
     function handleMoveDown(index){
-        const updatedIndex = taskList.findIndex(item=> item.index === index);
-        const updatedTask = [...taskList];
-        if (taskList.length <= updatedIndex + 1){
-            setAlert("down"); 
-            setTimeout(() => {
-                setAlert("idle");
-            }, 1500);
-            
-            return;
-        }
-        if (taskList.length >= updatedIndex){
-            [updatedTask[updatedIndex+1], updatedTask[updatedIndex]] = [updatedTask[updatedIndex], updatedTask[updatedIndex+1]];
-            setTaskList(updatedTask); 
-            return;
-        }
+        null
     }
 return (
     <>
