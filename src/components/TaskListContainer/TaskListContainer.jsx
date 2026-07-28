@@ -10,17 +10,17 @@ export default function TaskListContainer() {
     const [editTask, setEditTask] = useState(null);
     
     function handleEdit(index){
-        setAlert("idle")
-        const selectedTaskInd = taskList.findIndex(item=> item.id === index);
-        const selectedTaskText = taskList[selectedTaskInd].text;
-        setEditTask(selectedTaskInd.id)
-        setTask(selectedTaskText);
-        console.log("handleEdit", selectedTaskInd, selectedTaskText)
+        setAlert("edit")
+        setEditTask(true)
+        const selectedTask = taskList.find(item=> item.id === index);
+        setEditTask(selectedTask.id)
+        setTask(selectedTask.text)
+        console.log("handle edit", )
     }
     function handleSubmit(e){
         e.preventDefault()
         const tTask = task.trim().toLowerCase();
-        const isDuplicate = taskList.some(item=> item.text === tTask && item.id === index);
+        const isDuplicate = taskList.some(item=> item.text === tTask && item.id);
         const newTask = {id: crypto.randomUUID(), text: tTask};
         if (tTask === ""){
             return setAlert("blank");
@@ -29,7 +29,9 @@ export default function TaskListContainer() {
             return setAlert("duplicate");
         }
         if (editTask !== null){
-            setTaskList(prev=> prev.map(item=> item.id === index ? {...item, text: tTask} : item))
+            console.log("editTask !== null")
+            setTaskList(prev=> prev.map(item=> 
+                item.id === editTask ? {...item, text: tTask} : item))
             setEditTask(null)
             return setTask("")
         }
@@ -49,6 +51,9 @@ export default function TaskListContainer() {
         return
     }
     function handleDelete(index){
+        setTask("")
+        setAlert("idle")
+        setEditTask(null)
         const updatedTask = taskList.filter(item=> item.id !== index);
         return setTaskList(updatedTask)
     }
@@ -56,7 +61,6 @@ export default function TaskListContainer() {
         const updatedTask = [...taskList]
         const taskIndex = taskList.findIndex(item=> item.id === index);
         setAlert("idle")
-        // console.log(taskIndex+taskList.length, taskList.length)
         if (taskIndex+taskList.length <= taskList.length){
             return setAlert("top");
         }
