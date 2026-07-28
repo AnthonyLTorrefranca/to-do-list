@@ -9,6 +9,7 @@ export default function TaskAlert({alert}) {
       {alert === "down" && <h1 className="p-10 text-red-500">That's all the way down!</h1>}
       {alert === "cancelled" && <h1 className="p-10 text-red-500">Edit cancelled!</h1>}
       {alert === "edit" && <h1 className="p-10 text-red-500">EDIT MODE</h1>}
+      {alert === "delete" && <h1 className="p-10 text-red-500">Task deleted!</h1>}
     </section>
   )
 }

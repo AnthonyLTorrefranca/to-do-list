@@ -11,35 +11,37 @@ export default function TaskListContainer() {
     
     function handleEdit(index){
         setAlert("edit")
-        setEditTask(true)
-        const selectedTask = taskList.find(item=> item.id === index);
-        setEditTask(selectedTask.id)
-        setTask(selectedTask.text)
-        console.log("handle edit", )
+        const selectedTaskInd = taskList.findIndex(item=> item.id === index);
+        const selectedTaskText = taskList[selectedTaskInd].text;
+        setEditTask(taskList[selectedTaskInd])
+        setTask(selectedTaskText);
+        // console.log("handleEdit", selectedTaskInd.id, selectedTaskText)
     }
     function handleSubmit(e){
         e.preventDefault()
         const tTask = task.trim().toLowerCase();
-        const isDuplicate = taskList.some(item=> item.text === tTask && item.id);
-        const newTask = {id: crypto.randomUUID(), text: tTask};
+        const newTask = {id: crypto.randomUUID(), text: tTask}
+        const isDuplicate = taskList.some(item=> item.text === tTask && item.id !== editTask?.id);
         if (tTask === ""){
-            return setAlert("blank");
+            setAlert("blank");
+            return;
         }
         if (isDuplicate){
-            return setAlert("duplicate");
+            setAlert("duplicate");
+            return;
         }
         if (editTask !== null){
-            console.log("editTask !== null")
-            setTaskList(prev=> prev.map(item=> 
-                item.id === editTask ? {...item, text: tTask} : item))
+            setTaskList(prev=> prev.map(item=> item.id === editTask.id ? {...item, text: tTask} : item))
             setEditTask(null)
-            return setTask("")
-        }
-        setTaskList(prev=> [...prev, newTask])
-        setTask("")
-        console.log("handlesubmit", taskList)
+            setAlert("idle")
+            setTask("")
+            return
     }
-    // useEffect(()=>{console.log(taskList)}, [taskList])
+        setTaskList(prev=> [...prev, newTask])
+        setAlert("idle")
+        setTask("")
+    }
+    useEffect(()=>{console.log(editTask)}, [editTask])
     function handleCancel(){
         setEditTask(null);
         setAlert("cancelled");
@@ -47,13 +49,15 @@ export default function TaskListContainer() {
     }
     function handleChange(e){
         setTask(e.target.value)
-        setAlert("idle")
-        return
+        if (alert !== "edit"){
+            return setAlert("idle")
+        }
+        if (alert === "edit"){
+            console.log("handleChange")
+            return setAlert("edit")
+        }
     }
     function handleDelete(index){
-        setTask("")
-        setAlert("idle")
-        setEditTask(null)
         const updatedTask = taskList.filter(item=> item.id !== index);
         return setTaskList(updatedTask)
     }
@@ -61,6 +65,7 @@ export default function TaskListContainer() {
         const updatedTask = [...taskList]
         const taskIndex = taskList.findIndex(item=> item.id === index);
         setAlert("idle")
+        // console.log(taskIndex+taskList.length, taskList.length)
         if (taskIndex+taskList.length <= taskList.length){
             return setAlert("top");
         }
@@ -87,7 +92,7 @@ return (
     <>
     <section className="flex flex-col items-center border rounded-3xl h-350 w-150 px-30 pt-10 overflow-hidden">
         <TaskAlert alert={alert} />
-        <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} editTask={editTask} handleCancel={handleCancel} />
+        <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} alert={alert} handleCancel={handleCancel} />
         <TaskLists taskList={taskList} handleDelete={handleDelete} handleMoveUp={handleMoveUp} 
             handleMoveDown={handleMoveDown} handleEdit={handleEdit} />
     </section>
