@@ -11,35 +11,31 @@ export default function TaskListContainer() {
     
     function handleEdit(index){
         setAlert("edit")
-        const selectedTaskInd = taskList.findIndex(item=> item.id === index);
-        const selectedTaskText = taskList[selectedTaskInd].text;
-        setEditTask(taskList[selectedTaskInd])
-        setTask(selectedTaskText);
-        // console.log("handleEdit", selectedTaskInd.id, selectedTaskText)
+        const selectedTask = taskList.find(item=> item.id === index);
+        if (!selectedTask) return;
+        const selTaskText = selectedTask.text
+        setEditTask(selectedTask)
+        setTask(selTaskText)
+        console.log("handleEdit", selectedTask.id);
     }
     function handleSubmit(e){
         e.preventDefault()
         const tTask = task.trim().toLowerCase();
-        const newTask = {id: crypto.randomUUID(), text: tTask}
         const isDuplicate = taskList.some(item=> item.text === tTask && item.id !== editTask?.id);
-        if (tTask === ""){
-            setAlert("blank");
-            return;
-        }
-        if (isDuplicate){
-            setAlert("duplicate");
-            return;
-        }
-        if (editTask !== null){
+        if (tTask === "" && editTask !== null){ return setAlert("blank"); }
+        if (tTask === ""){ return setAlert("blank"); }
+        if (isDuplicate){ return setAlert("duplicate"); }
+        if (editTask !== null){ 
             setTaskList(prev=> prev.map(item=> item.id === editTask.id ? {...item, text: tTask} : item))
-            setEditTask(null)
-            setAlert("idle")
+            setEditTask(null);
+            setAlert("idle");
             setTask("")
             return
-    }
+        }
+        const newTask = {id: crypto.randomUUID(), text: tTask}
         setTaskList(prev=> [...prev, newTask])
-        setAlert("idle")
         setTask("")
+        console.log("handleSubmit", taskList)
     }
     useEffect(()=>{console.log(editTask)}, [editTask])
     function handleCancel(){
