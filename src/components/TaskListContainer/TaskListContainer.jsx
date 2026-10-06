@@ -87,7 +87,7 @@ export default function TaskListContainer() {
 return (
     <>
     <section className="flex flex-col items-center border rounded-3xl h-350 w-250 px-30 pt-10 overflow-hidden bg-[#0A0E17]">
-        <TaskAlert alert={alert} />
+        <TaskAlert alert={alert} className="p-5" />
         <TaskInput task={task} handleChange={handleChange} handleSubmit={handleSubmit} alert={alert} handleCancel={handleCancel} />
         <TaskLists taskList={taskList} handleDelete={handleDelete} handleMoveUp={handleMoveUp} 
             handleMoveDown={handleMoveDown} handleEdit={handleEdit} />
